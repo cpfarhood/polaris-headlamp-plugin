@@ -9,6 +9,8 @@ jobs:
   ai-review:
     name: AI Code Review
     runs-on: ubuntu-latest
+    container:
+      image: catthehacker/ubuntu:act-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
