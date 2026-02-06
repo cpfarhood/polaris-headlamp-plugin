@@ -6,7 +6,11 @@
     "start": "headlamp-plugin start",
     "build": "headlamp-plugin build",
     "package": "headlamp-plugin package",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --noEmit",
+    "lint": "eslint --ext .ts,.tsx src/",
+    "lint:fix": "eslint --ext .ts,.tsx --fix src/",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/"
   },
   "devDependencies": {
     "@kinvolk/headlamp-plugin": "^0.13.0"

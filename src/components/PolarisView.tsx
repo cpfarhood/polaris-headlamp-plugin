@@ -1,8 +1,4 @@
-import {
-  Loader,
-  SectionBox,
-  SectionHeader,
-} from '@kinvolk/headlamp-plugin/lib/CommonComponents';
+import { Loader, SectionBox, SectionHeader } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import React from 'react';
 import {
   AuditData,
@@ -20,19 +16,16 @@ const INTERVAL_OPTIONS = [
   { label: '30 minutes', value: 1800 },
 ];
 
-function RefreshSettings(props: {
-  interval: number;
-  onChange: (seconds: number) => void;
-}) {
+function RefreshSettings(props: { interval: number; onChange: (seconds: number) => void }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
       <label htmlFor="polaris-refresh-interval">Refresh interval:</label>
       <select
         id="polaris-refresh-interval"
         value={props.interval}
-        onChange={(e) => props.onChange(Number(e.target.value))}
+        onChange={e => props.onChange(Number(e.target.value))}
       >
-        {INTERVAL_OPTIONS.map((opt) => (
+        {INTERVAL_OPTIONS.map(opt => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
@@ -69,9 +62,7 @@ function ScoreBadge(props: { score: number }) {
   const color = props.score >= 80 ? '#4caf50' : props.score >= 50 ? '#ff9800' : '#f44336';
   return (
     <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-      <div style={{ fontSize: '3rem', fontWeight: 'bold', color }}>
-        {props.score}%
-      </div>
+      <div style={{ fontSize: '3rem', fontWeight: 'bold', color }}>{props.score}%</div>
       <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>Cluster Score</div>
     </div>
   );
@@ -135,13 +126,12 @@ export default function PolarisView() {
 
   return (
     <>
-      <SectionHeader title="Polaris" actions={[
-        <RefreshSettings
-          key="refresh"
-          interval={interval}
-          onChange={handleIntervalChange}
-        />,
-      ]} />
+      <SectionHeader
+        title="Polaris"
+        actions={[
+          <RefreshSettings key="refresh" interval={interval} onChange={handleIntervalChange} />,
+        ]}
+      />
 
       {error && (
         <SectionBox title="Error">
@@ -153,9 +143,7 @@ export default function PolarisView() {
 
       {!data && !error && (
         <SectionBox title="No Data">
-          <div style={{ padding: '16px' }}>
-            No Polaris audit results found.
-          </div>
+          <div style={{ padding: '16px' }}>No Polaris audit results found.</div>
         </SectionBox>
       )}
     </>

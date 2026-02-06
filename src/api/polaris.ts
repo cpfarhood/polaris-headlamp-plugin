@@ -157,7 +157,7 @@ export function usePolarisData(refreshIntervalSeconds: number): PolarisDataState
       return;
     }
     const intervalId = window.setInterval(() => {
-      setTick((t) => t + 1);
+      setTick(t => t + 1);
     }, refreshIntervalSeconds * 1000);
     return () => window.clearInterval(intervalId);
   }, [refreshIntervalSeconds]);

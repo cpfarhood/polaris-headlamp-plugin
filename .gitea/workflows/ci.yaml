@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    container: node:20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npx eslint --ext .ts,.tsx src/
+
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Format check
+        run: npx prettier --check src/
