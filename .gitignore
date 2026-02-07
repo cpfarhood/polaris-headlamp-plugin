@@ -2,3 +2,4 @@ node_modules/
 dist/
 .headlamp-plugin/
 .mcp.json
+*.tar.gz

@@ -17,6 +17,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build
+        run: npx @kinvolk/headlamp-plugin build
+
       - name: Lint
         run: npx eslint --ext .ts,.tsx src/
 
