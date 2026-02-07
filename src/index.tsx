@@ -44,4 +44,4 @@ registerRoute({
   ),
 });
 
-registerPluginSettings('polaris-headlamp-plugin', PolarisSettings, true);
+registerPluginSettings('headlamp-polaris-plugin', PolarisSettings, true);

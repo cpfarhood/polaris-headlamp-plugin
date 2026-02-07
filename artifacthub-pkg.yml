@@ -22,7 +22,7 @@ maintainers:
   - name: cpfarhood
     email: "chris@farhood.org"
 annotations:
-  headlamp/plugin/archive-url: "https://github.com/cpfarhood/headlamp-polaris-plugin/releases/download/v0.0.8/polaris-headlamp-plugin-0.0.8.tar.gz"
+  headlamp/plugin/archive-url: "https://github.com/cpfarhood/headlamp-polaris-plugin/releases/download/v0.0.8/headlamp-polaris-plugin-0.0.8.tar.gz"
   headlamp/plugin/version-compat: ">=0.26"
   headlamp/plugin/archive-checksum: sha256:425082de35c4c59363c8cfe5859145781f76dc2423084bd8b4585b28bec66784
   headlamp/plugin/distro-compat: in-cluster

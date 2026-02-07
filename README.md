@@ -1,6 +1,6 @@
-# polaris-headlamp-plugin
+# headlamp-polaris-plugin
 
-[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/polaris-headlamp-plugin)](https://artifacthub.io/packages/headlamp/polaris-headlamp-plugin/polaris-headlamp-plugin)
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/polaris)](https://artifacthub.io/packages/headlamp/polaris/headlamp-polaris-plugin)
 
 A [Headlamp](https://headlamp.dev/) plugin that surfaces [Fairwinds Polaris](https://polaris.docs.fairwinds.com/) audit results directly in the Headlamp UI.
 
@@ -28,12 +28,12 @@ Error states are handled explicitly: RBAC denied (403), Polaris not installed (4
 
 ### Option 1: Artifact Hub + Headlamp plugin manager (recommended)
 
-The plugin is published on [Artifact Hub](https://artifacthub.io/packages/headlamp/polaris-headlamp-plugin/polaris-headlamp-plugin). Configure Headlamp's `pluginsManager` in your Helm values to install it automatically:
+The plugin is published on [Artifact Hub](https://artifacthub.io/packages/headlamp/polaris/headlamp-polaris-plugin). Configure Headlamp's `pluginsManager` in your Helm values to install it automatically:
 
 ```yaml
 pluginsManager:
   sources:
-    - url: https://artifacthub.io/packages/headlamp/polaris-headlamp-plugin/polaris-headlamp-plugin
+    - url: https://artifacthub.io/packages/headlamp/polaris/headlamp-polaris-plugin
 ```
 
 Headlamp will fetch and install the plugin on startup.
@@ -67,7 +67,7 @@ volumeMounts:
 Download the `.tar.gz` from the [GitHub releases page](https://github.com/cpfarhood/headlamp-polaris-plugin/releases) or the [Gitea releases page](https://git.farh.net/farhoodliquor/headlamp-polaris-plugin/releases), then extract into Headlamp's plugin directory:
 
 ```bash
-tar xzf polaris-headlamp-plugin-0.0.1.tar.gz -C /headlamp/plugins/
+tar xzf headlamp-polaris-plugin-0.0.1.tar.gz -C /headlamp/plugins/
 ```
 
 ### Option 4: Build from source
@@ -113,7 +113,7 @@ subjects:
 
 ```bash
 git clone https://github.com/cpfarhood/headlamp-polaris-plugin.git
-cd polaris-headlamp-plugin
+cd headlamp-polaris-plugin
 npm install
 ```
 
@@ -129,7 +129,7 @@ This starts the Headlamp plugin dev server. Point a running Headlamp instance at
 
 ```bash
 npm run build        # outputs dist/main.js
-npm run package      # creates polaris-headlamp-plugin-<version>.tar.gz
+npm run package      # creates headlamp-polaris-plugin-<version>.tar.gz
 ```
 
 ### Type-check
@@ -219,7 +219,7 @@ When releasing a new version, update `artifacthub-pkg.yml`:
 
 ## Links
 
-- [Artifact Hub](https://artifacthub.io/packages/headlamp/polaris-headlamp-plugin/polaris-headlamp-plugin)
+- [Artifact Hub](https://artifacthub.io/packages/headlamp/polaris/headlamp-polaris-plugin)
 - [GitHub (mirror)](https://github.com/cpfarhood/headlamp-polaris-plugin)
 - [Gitea (source of truth)](https://git.farh.net/farhoodliquor/headlamp-polaris-plugin)
 - [Headlamp](https://headlamp.dev/)
