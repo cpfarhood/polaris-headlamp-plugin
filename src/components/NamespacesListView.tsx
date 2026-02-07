@@ -1,4 +1,5 @@
 import {
+  Link,
   Loader,
   NameValueTable,
   SectionBox,
@@ -7,7 +8,6 @@ import {
   StatusLabel,
 } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import {
   computeScore,
   countResultsForItems,
@@ -28,6 +28,7 @@ interface NamespaceRow {
   pass: number;
   warning: number;
   danger: number;
+  skipped: number;
 }
 
 export default function NamespacesListView() {
@@ -77,6 +78,7 @@ export default function NamespacesListView() {
       pass: counts.pass,
       warning: counts.warning,
       danger: counts.danger,
+      skipped: counts.skipped,
     };
   });
 
@@ -89,7 +91,9 @@ export default function NamespacesListView() {
             {
               label: 'Namespace',
               getter: (row: NamespaceRow) => (
-                <Link to={`/polaris/ns/${row.namespace}`}>{row.namespace}</Link>
+                <Link routeName="polaris-namespace" params={{ namespace: row.namespace }}>
+                  {row.namespace}
+                </Link>
               ),
             },
             {
@@ -100,9 +104,7 @@ export default function NamespacesListView() {
             },
             {
               label: 'Pass',
-              getter: (row: NamespaceRow) => (
-                <StatusLabel status="success">{row.pass}</StatusLabel>
-              ),
+              getter: (row: NamespaceRow) => <StatusLabel status="success">{row.pass}</StatusLabel>,
             },
             {
               label: 'Warning',
@@ -112,9 +114,11 @@ export default function NamespacesListView() {
             },
             {
               label: 'Danger',
-              getter: (row: NamespaceRow) => (
-                <StatusLabel status="error">{row.danger}</StatusLabel>
-              ),
+              getter: (row: NamespaceRow) => <StatusLabel status="error">{row.danger}</StatusLabel>,
+            },
+            {
+              label: 'Skipped',
+              getter: (row: NamespaceRow) => <StatusLabel status="">{row.skipped}</StatusLabel>,
             },
           ]}
           data={rows}

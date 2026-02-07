@@ -118,6 +118,10 @@ export default function NamespaceDetailView() {
               name: 'Danger',
               value: <StatusLabel status="error">{counts.danger}</StatusLabel>,
             },
+            {
+              name: 'Skipped',
+              value: <StatusLabel status="">{counts.skipped}</StatusLabel>,
+            },
           ]}
         />
       </SectionBox>

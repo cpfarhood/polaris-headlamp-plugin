@@ -6,7 +6,7 @@ import {
   StatusLabel,
 } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import React from 'react';
-import { AuditData, countResults, ResultCounts } from '../api/polaris';
+import { AuditData, computeScore, countResults, ResultCounts } from '../api/polaris';
 import { usePolarisDataContext } from '../api/PolarisDataContext';
 
 function scoreStatus(score: number): 'success' | 'warning' | 'error' {
@@ -15,40 +15,10 @@ function scoreStatus(score: number): 'success' | 'warning' | 'error' {
   return 'error';
 }
 
-function OverviewSection(props: {
-  data: AuditData;
-  counts: ResultCounts;
-  includeSkipped: boolean;
-}) {
-  const { counts, includeSkipped } = props;
-
-  const displayTotal = includeSkipped ? counts.total : counts.total - counts.skipped;
-  const displayPass = counts.pass;
-  const score = displayTotal === 0 ? 0 : Math.round((displayPass / displayTotal) * 100);
+function OverviewSection(props: { data: AuditData; counts: ResultCounts }) {
+  const { counts } = props;
+  const score = computeScore(counts);
   const status = scoreStatus(score);
-
-  const summaryRows: { name: string; value: React.ReactNode }[] = [
-    { name: 'Total Checks', value: String(displayTotal) },
-    {
-      name: 'Pass',
-      value: <StatusLabel status="success">{counts.pass}</StatusLabel>,
-    },
-    {
-      name: 'Warning',
-      value: <StatusLabel status="warning">{counts.warning}</StatusLabel>,
-    },
-    {
-      name: 'Danger',
-      value: <StatusLabel status="error">{counts.danger}</StatusLabel>,
-    },
-  ];
-
-  if (includeSkipped) {
-    summaryRows.push({
-      name: 'Skipped',
-      value: <StatusLabel status="">{counts.skipped}</StatusLabel>,
-    });
-  }
 
   return (
     <>
@@ -63,7 +33,27 @@ function OverviewSection(props: {
         />
       </SectionBox>
       <SectionBox title="Check Summary">
-        <NameValueTable rows={summaryRows} />
+        <NameValueTable
+          rows={[
+            { name: 'Total Checks', value: String(counts.total) },
+            {
+              name: 'Pass',
+              value: <StatusLabel status="success">{counts.pass}</StatusLabel>,
+            },
+            {
+              name: 'Warning',
+              value: <StatusLabel status="warning">{counts.warning}</StatusLabel>,
+            },
+            {
+              name: 'Danger',
+              value: <StatusLabel status="error">{counts.danger}</StatusLabel>,
+            },
+            {
+              name: 'Skipped',
+              value: <StatusLabel status="">{counts.skipped}</StatusLabel>,
+            },
+          ]}
+        />
       </SectionBox>
       <SectionBox title="Cluster Info">
         <NameValueTable
@@ -79,9 +69,8 @@ function OverviewSection(props: {
   );
 }
 
-export default function DashboardView(props: { includeSkipped: boolean }) {
+export default function DashboardView() {
   const { data, loading, error } = usePolarisDataContext();
-  const title = props.includeSkipped ? 'Polaris — Full Audit' : 'Polaris — Overview';
 
   if (loading) {
     return <Loader title="Loading Polaris audit data..." />;
@@ -91,7 +80,7 @@ export default function DashboardView(props: { includeSkipped: boolean }) {
 
   return (
     <>
-      <SectionHeader title={title} />
+      <SectionHeader title="Polaris — Overview" />
 
       {error && (
         <SectionBox title="Error">
@@ -106,9 +95,7 @@ export default function DashboardView(props: { includeSkipped: boolean }) {
         </SectionBox>
       )}
 
-      {data && counts && (
-        <OverviewSection data={data} counts={counts} includeSkipped={props.includeSkipped} />
-      )}
+      {data && counts && <OverviewSection data={data} counts={counts} />}
 
       {!data && !error && (
         <SectionBox title="No Data">

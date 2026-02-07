@@ -30,14 +30,6 @@ registerSidebarEntry({
 
 registerSidebarEntry({
   parent: 'polaris',
-  name: 'polaris-full',
-  label: 'Full Audit',
-  url: '/polaris/full-audit',
-  icon: 'mdi:clipboard-text-search',
-});
-
-registerSidebarEntry({
-  parent: 'polaris',
   name: 'polaris-namespaces',
   label: 'Namespaces',
   url: '/polaris/namespaces',
@@ -53,19 +45,7 @@ registerRoute({
   exact: true,
   component: () => (
     <PolarisDataProvider>
-      <DashboardView includeSkipped={false} />
-    </PolarisDataProvider>
-  ),
-});
-
-registerRoute({
-  path: '/polaris/full-audit',
-  sidebar: 'polaris-full',
-  name: 'polaris-full-audit',
-  exact: true,
-  component: () => (
-    <PolarisDataProvider>
-      <DashboardView includeSkipped />
+      <DashboardView />
     </PolarisDataProvider>
   ),
 });

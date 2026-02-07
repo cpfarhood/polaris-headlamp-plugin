@@ -23,6 +23,9 @@ npx tsc --noEmit
 
 # Lint
 npx eslint src/
+
+# Run tests
+npm test
 ```
 
 ## Architecture
@@ -32,15 +35,18 @@ src/
 ├── index.tsx                           # Entry point: registers sidebar entries + routes
 ├── api/
 │   ├── polaris.ts                      # Types (AuditData schema), usePolarisData hook, countResults utilities, refresh settings
+│   ├── polaris.test.ts                 # Unit tests for utility functions (vitest)
 │   └── PolarisDataContext.tsx           # React context provider for shared data fetch
 └── components/
-    ├── DashboardView.tsx                # Overview / Full Audit page (score, check summary, cluster info)
+    ├── DashboardView.tsx                # Overview page (score, check summary with skipped count, cluster info)
+    ├── NamespacesListView.tsx           # Namespace list with scores and links to detail views
     ├── NamespaceDetailView.tsx          # Per-namespace drill-down with resource table
-    ├── DynamicSidebarRegistrar.tsx       # Registers namespace sidebar entries from live audit data
     └── PolarisSettings.tsx              # Plugin settings (refresh interval selector)
 ```
 
-Top-level sidebar section at `/polaris` with sub-routes for full audit (`/polaris/full-audit`) and per-namespace views (`/polaris/ns/:namespace`). Data is fetched via `ApiProxy.request` to the Polaris dashboard service proxy and refreshed on a user-configurable interval (stored in localStorage under `polaris-plugin-refresh-interval`, default 5 minutes). Score is computed from result counts (pass/total).
+Top-level sidebar section at `/polaris` with sub-routes for namespaces list (`/polaris/namespaces`) and per-namespace views (`/polaris/ns/:namespace`). Data is fetched via `ApiProxy.request` to the Polaris dashboard service proxy and refreshed on a user-configurable interval (stored in localStorage under `polaris-plugin-refresh-interval`, default 5 minutes). Score is computed from result counts (pass/total). Skipped checks are always displayed in summaries.
+
+**Sidebar limitation**: Headlamp's sidebar only supports 2-level nesting (parent → children). The `Collapse` component is driven by route-based selection, not click-to-toggle, so 3-level hierarchies don't expand properly. Namespace navigation is handled via the in-content table on the Namespaces page instead.
 
 ## Security / RBAC Requirements
 
