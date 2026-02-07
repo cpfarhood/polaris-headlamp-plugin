@@ -1,5 +1,5 @@
 version: 0.0.7
-name: polaris-headlamp-plugin
+name: headlamp-polaris-plugin
 displayName: Polaris
 createdAt: "2026-02-05T19:00:00Z"
 description: Surfaces Fairwinds Polaris audit results inside the Headlamp UI.
