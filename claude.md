@@ -82,7 +82,7 @@ roleRef:
 Additional considerations:
 
 - **NetworkPolicy**: If the `polaris` namespace enforces network policies, allow ingress from the Headlamp pod (or the API server, since it performs the proxy hop) to `polaris-dashboard` on port 80.
-- **Polaris dashboard listen address**: The Polaris Helm chart exposes the dashboard on a ClusterIP service (`polaris-dashboard:80`). If the chart is installed with `dashboard.enabled: false`, the service won't exist and the proxy request will 404.
+- **Polaris dashboard listen address**: The Polaris Helm chart exposes the dashboard on a ClusterIP service (`polaris-dashboard:80`). If the chart is installed with `dashboard.enabled: false`, the service will not be created, resulting in a 404 error for proxy requests.
 - **No write operations**: The plugin only performs `GET` requests through the proxy. No `create`, `update`, or `delete` verbs are required. Do not grant broader service proxy access than `get`.
 - **Token-auth mode**: When Headlamp is configured for user-supplied tokens (rather than a fixed service account), each user's own RBAC bindings must include the role above. A 403 from the plugin means the logged-in user lacks the binding.
 - **Audit logging**: Kubernetes API audit logs will record every proxied request as a `get` on `services/proxy` in the `polaris` namespace. Set an appropriate audit policy level if request volume from the auto-refresh interval is a concern.
