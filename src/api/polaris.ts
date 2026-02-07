@@ -61,6 +61,7 @@ export interface ResultCounts {
   pass: number;
   warning: number;
   danger: number;
+  skipped: number;
 }
 
 function countResultSet(rs: ResultSet, counts: ResultCounts): void {
@@ -69,6 +70,8 @@ function countResultSet(rs: ResultSet, counts: ResultCounts): void {
     counts.total++;
     if (msg.Success) {
       counts.pass++;
+    } else if (msg.Severity === 'ignore') {
+      counts.skipped++;
     } else if (msg.Severity === 'warning') {
       counts.warning++;
     } else if (msg.Severity === 'danger') {
@@ -78,7 +81,7 @@ function countResultSet(rs: ResultSet, counts: ResultCounts): void {
 }
 
 function countResultItems(results: Result[]): ResultCounts {
-  const counts: ResultCounts = { total: 0, pass: 0, warning: 0, danger: 0 };
+  const counts: ResultCounts = { total: 0, pass: 0, warning: 0, danger: 0, skipped: 0 };
   for (const result of results) {
     countResultSet(result.Results, counts);
     if (result.PodResult) {
@@ -137,6 +140,11 @@ export function getRefreshInterval(): number {
 export function setRefreshInterval(seconds: number): void {
   localStorage.setItem(STORAGE_KEY, String(seconds));
 }
+
+// --- Polaris dashboard proxy URL ---
+
+export const POLARIS_DASHBOARD_PROXY =
+  '/api/v1/namespaces/polaris/services/polaris-dashboard:80/proxy/';
 
 // --- Score computation ---
 

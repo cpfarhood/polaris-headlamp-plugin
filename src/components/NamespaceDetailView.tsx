@@ -12,6 +12,7 @@ import {
   computeScore,
   countResultsForItems,
   filterResultsByNamespace,
+  POLARIS_DASHBOARD_PROXY,
   Result,
   ResultCounts,
 } from '../api/polaris';
@@ -81,6 +82,21 @@ export default function NamespaceDetailView() {
   return (
     <>
       <SectionHeader title={`Polaris — ${namespace}`} />
+
+      <SectionBox title="External">
+        <NameValueTable
+          rows={[
+            {
+              name: 'Polaris Dashboard',
+              value: (
+                <a href={POLARIS_DASHBOARD_PROXY} target="_blank" rel="noopener noreferrer">
+                  View in Polaris Dashboard
+                </a>
+              ),
+            },
+          ]}
+        />
+      </SectionBox>
 
       <SectionBox title="Namespace Score">
         <NameValueTable

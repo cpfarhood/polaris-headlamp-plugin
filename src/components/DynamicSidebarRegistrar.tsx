@@ -16,10 +16,10 @@ export default function DynamicSidebarRegistrar() {
       if (registeredNamespaces.has(ns)) continue;
       registeredNamespaces.add(ns);
       registerSidebarEntry({
-        parent: 'polaris',
+        parent: 'polaris-namespaces',
         name: `polaris-ns-${ns}`,
         label: ns,
-        url: `/polaris/${ns}`,
+        url: `/polaris/ns/${ns}`,
         icon: 'mdi:folder-outline',
       });
     }
