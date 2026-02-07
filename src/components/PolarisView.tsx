@@ -2,6 +2,7 @@ import { Loader, SectionBox, SectionHeader } from '@kinvolk/headlamp-plugin/lib/
 import React from 'react';
 import {
   AuditData,
+  computeScore,
   countResults,
   getRefreshInterval,
   ResultCounts,
@@ -69,10 +70,11 @@ function ScoreBadge(props: { score: number }) {
 }
 
 function OverviewSection(props: { data: AuditData; counts: ResultCounts }) {
+  const score = computeScore(props.counts);
   return (
     <>
       <SectionBox title="Score">
-        <ScoreBadge score={props.data.Score} />
+        <ScoreBadge score={score} />
       </SectionBox>
       <SectionBox title="Check Summary">
         <div

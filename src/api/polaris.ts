@@ -1,4 +1,4 @@
-import { K8s } from '@kinvolk/headlamp-plugin/lib';
+import { ApiProxy } from '@kinvolk/headlamp-plugin/lib';
 import React from 'react';
 
 // --- Polaris AuditData schema (matches pkg/validator/output.go) ---
@@ -52,7 +52,6 @@ export interface AuditData {
   DisplayName: string;
   ClusterInfo: ClusterInfo;
   Results: Result[];
-  Score: number;
 }
 
 // --- Result counting ---
@@ -112,7 +111,17 @@ export function setRefreshInterval(seconds: number): void {
   localStorage.setItem(STORAGE_KEY, String(seconds));
 }
 
+// --- Score computation ---
+
+export function computeScore(counts: ResultCounts): number {
+  if (counts.total === 0) return 0;
+  return Math.round((counts.pass / counts.total) * 100);
+}
+
 // --- Data fetching hook ---
+
+const POLARIS_API_PATH =
+  '/api/v1/namespaces/polaris/services/polaris-dashboard:80/proxy/results.json';
 
 interface PolarisDataState {
   data: AuditData | null;
@@ -121,87 +130,54 @@ interface PolarisDataState {
 }
 
 export function usePolarisData(refreshIntervalSeconds: number): PolarisDataState {
-  const [configMap, fetchError] = K8s.ResourceClasses.ConfigMap.useGet(
-    'polaris-dashboard',
-    'polaris'
-  );
-  const [cachedData, setCachedData] = React.useState<AuditData | null>(null);
-  const [parseError, setParseError] = React.useState<string | null>(null);
-  const [lastFetchTime, setLastFetchTime] = React.useState<number>(0);
-  const [, setTick] = React.useState(0);
+  const [data, setData] = React.useState<AuditData | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [tick, setTick] = React.useState(0);
 
-  // Parse ConfigMap data when it arrives
   React.useEffect(() => {
-    if (!configMap) {
-      return;
-    }
-    const dataMap = configMap.data as Record<string, string> | undefined;
-    const raw = dataMap?.['dashboard.json'];
-    if (!raw) {
-      setParseError('ConfigMap exists but dashboard.json key is missing.');
-      return;
-    }
-    try {
-      const parsed: AuditData = JSON.parse(raw);
-      setCachedData(parsed);
-      setParseError(null);
-      setLastFetchTime(Date.now());
-    } catch {
-      setParseError('Failed to parse dashboard.json: malformed JSON.');
-    }
-  }, [configMap]);
+    let cancelled = false;
 
-  // Periodic refresh via re-render trigger
-  React.useEffect(() => {
-    if (refreshIntervalSeconds <= 0) {
-      return;
+    async function fetchData() {
+      try {
+        const result: AuditData = await ApiProxy.request(POLARIS_API_PATH);
+        if (!cancelled) {
+          setData(result);
+          setError(null);
+          setLoading(false);
+        }
+      } catch (err: unknown) {
+        if (cancelled) return;
+        const status = (err as { status?: number }).status;
+        if (status === 403) {
+          setError(
+            'Access denied (403). Check that your RBAC permissions allow proxying to the Polaris service.'
+          );
+        } else if (status === 404 || status === 503) {
+          setError(
+            'Polaris dashboard not reachable. Ensure Polaris is installed in the polaris namespace.'
+          );
+        } else {
+          setError(`Failed to fetch Polaris data: ${String(err)}`);
+        }
+        setLoading(false);
+      }
     }
+
+    fetchData();
+    return () => {
+      cancelled = true;
+    };
+  }, [tick]);
+
+  // Periodic refresh
+  React.useEffect(() => {
+    if (refreshIntervalSeconds <= 0) return;
     const intervalId = window.setInterval(() => {
       setTick(t => t + 1);
     }, refreshIntervalSeconds * 1000);
     return () => window.clearInterval(intervalId);
   }, [refreshIntervalSeconds]);
 
-  // Determine error state
-  if (fetchError) {
-    const status = (fetchError as { status?: number }).status;
-    if (status === 403) {
-      return {
-        data: cachedData,
-        loading: false,
-        error:
-          'Access denied (403). Check that your RBAC permissions allow reading ConfigMaps in the polaris namespace.',
-      };
-    }
-    if (status === 404) {
-      return {
-        data: cachedData,
-        loading: false,
-        error:
-          'Polaris dashboard ConfigMap not found (404). Ensure Polaris is installed in the polaris namespace.',
-      };
-    }
-    return {
-      data: cachedData,
-      loading: false,
-      error: `Failed to fetch Polaris data: ${String(fetchError)}`,
-    };
-  }
-
-  if (parseError) {
-    return { data: cachedData, loading: false, error: parseError };
-  }
-
-  const isLoading = !configMap && !fetchError;
-
-  // Return cached data while loading if we have it
-  if (isLoading && cachedData && lastFetchTime > 0) {
-    return { data: cachedData, loading: false, error: null };
-  }
-
-  return {
-    data: cachedData,
-    loading: isLoading,
-    error: null,
-  };
+  return { data, loading, error };
 }
