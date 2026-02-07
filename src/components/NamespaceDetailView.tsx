@@ -13,6 +13,7 @@ import {
   countResultsForItems,
   filterResultsByNamespace,
   Result,
+  ResultCounts,
 } from '../api/polaris';
 import { usePolarisDataContext } from '../api/PolarisDataContext';
 
@@ -22,9 +23,8 @@ function scoreStatus(score: number): 'success' | 'warning' | 'error' {
   return 'error';
 }
 
-function resourceCounts(result: Result) {
-  const counts = countResultsForItems([result]);
-  return counts;
+function resourceCounts(result: Result): ResultCounts {
+  return countResultsForItems([result]);
 }
 
 export default function NamespaceDetailView() {
@@ -69,6 +69,15 @@ export default function NamespaceDetailView() {
   const score = computeScore(counts);
   const status = scoreStatus(score);
 
+  const countsPerResource = new Map<string, ResultCounts>();
+  for (const r of results) {
+    countsPerResource.set(`${r.Namespace}/${r.Kind}/${r.Name}`, resourceCounts(r));
+  }
+
+  function getResourceCounts(row: Result): ResultCounts {
+    return countsPerResource.get(`${row.Namespace}/${row.Kind}/${row.Name}`) ?? resourceCounts(row);
+  }
+
   return (
     <>
       <SectionHeader title={`Polaris — ${namespace}`} />
@@ -104,24 +113,21 @@ export default function NamespaceDetailView() {
             { label: 'Kind', getter: (row: Result) => row.Kind },
             {
               label: 'Pass',
-              getter: (row: Result) => {
-                const c = resourceCounts(row);
-                return <StatusLabel status="success">{c.pass}</StatusLabel>;
-              },
+              getter: (row: Result) => (
+                <StatusLabel status="success">{getResourceCounts(row).pass}</StatusLabel>
+              ),
             },
             {
               label: 'Warning',
-              getter: (row: Result) => {
-                const c = resourceCounts(row);
-                return <StatusLabel status="warning">{c.warning}</StatusLabel>;
-              },
+              getter: (row: Result) => (
+                <StatusLabel status="warning">{getResourceCounts(row).warning}</StatusLabel>
+              ),
             },
             {
               label: 'Danger',
-              getter: (row: Result) => {
-                const c = resourceCounts(row);
-                return <StatusLabel status="error">{c.danger}</StatusLabel>;
-              },
+              getter: (row: Result) => (
+                <StatusLabel status="error">{getResourceCounts(row).danger}</StatusLabel>
+              ),
             },
           ]}
           data={results}
