@@ -1,6 +1,8 @@
 import {
   Loader,
   NameValueTable,
+  PercentageBar,
+  PercentageCircle,
   SectionBox,
   SectionHeader,
   StatusLabel,
@@ -9,30 +11,31 @@ import React from 'react';
 import { AuditData, computeScore, countResults, ResultCounts } from '../api/polaris';
 import { usePolarisDataContext } from '../api/PolarisDataContext';
 
-function scoreStatus(score: number): 'success' | 'warning' | 'error' {
-  if (score >= 80) return 'success';
-  if (score >= 50) return 'warning';
-  return 'error';
-}
+const COLORS = {
+  pass: '#4caf50',
+  warning: '#ff9800',
+  danger: '#f44336',
+  skipped: '#9e9e9e',
+};
 
 function OverviewSection(props: { data: AuditData; counts: ResultCounts }) {
   const { counts } = props;
   const score = computeScore(counts);
-  const status = scoreStatus(score);
+
+  const chartData = [
+    { name: 'Pass', value: counts.pass, fill: COLORS.pass },
+    { name: 'Warning', value: counts.warning, fill: COLORS.warning },
+    { name: 'Danger', value: counts.danger, fill: COLORS.danger },
+    { name: 'Skipped', value: counts.skipped, fill: COLORS.skipped },
+  ];
 
   return (
     <>
-      <SectionBox title="Score">
-        <NameValueTable
-          rows={[
-            {
-              name: 'Cluster Score',
-              value: <StatusLabel status={status}>{score}%</StatusLabel>,
-            },
-          ]}
-        />
+      <SectionBox title="Cluster Score">
+        <PercentageCircle data={chartData} total={counts.total} label={`${score}%`} />
       </SectionBox>
-      <SectionBox title="Check Summary">
+      <SectionBox title="Check Distribution">
+        <PercentageBar data={chartData} total={counts.total} />
         <NameValueTable
           rows={[
             { name: 'Total Checks', value: String(counts.total) },
@@ -48,10 +51,7 @@ function OverviewSection(props: { data: AuditData; counts: ResultCounts }) {
               name: 'Danger',
               value: <StatusLabel status="error">{counts.danger}</StatusLabel>,
             },
-            {
-              name: 'Skipped',
-              value: <StatusLabel status="">{counts.skipped}</StatusLabel>,
-            },
+            { name: 'Skipped', value: String(counts.skipped) },
           ]}
         />
       </SectionBox>

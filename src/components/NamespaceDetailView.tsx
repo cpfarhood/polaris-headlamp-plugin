@@ -120,7 +120,7 @@ export default function NamespaceDetailView() {
             },
             {
               name: 'Skipped',
-              value: <StatusLabel status="">{counts.skipped}</StatusLabel>,
+              value: String(counts.skipped),
             },
           ]}
         />

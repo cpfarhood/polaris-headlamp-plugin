@@ -1,5 +1,5 @@
+import { Router } from '@kinvolk/headlamp-plugin/lib';
 import {
-  Link,
   Loader,
   NameValueTable,
   SectionBox,
@@ -8,6 +8,7 @@ import {
   StatusLabel,
 } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   computeScore,
   countResultsForItems,
@@ -91,7 +92,11 @@ export default function NamespacesListView() {
             {
               label: 'Namespace',
               getter: (row: NamespaceRow) => (
-                <Link routeName="polaris-namespace" params={{ namespace: row.namespace }}>
+                <Link
+                  to={Router.createRouteURL('polaris-namespace', {
+                    namespace: row.namespace,
+                  })}
+                >
                   {row.namespace}
                 </Link>
               ),
@@ -118,7 +123,7 @@ export default function NamespacesListView() {
             },
             {
               label: 'Skipped',
-              getter: (row: NamespaceRow) => <StatusLabel status="">{row.skipped}</StatusLabel>,
+              getter: (row: NamespaceRow) => String(row.skipped),
             },
           ]}
           data={rows}
