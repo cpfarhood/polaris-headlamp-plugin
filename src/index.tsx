@@ -6,8 +6,8 @@ import {
 import React from 'react';
 import { PolarisDataProvider } from './api/PolarisDataContext';
 import DashboardView from './components/DashboardView';
-import DynamicSidebarRegistrar from './components/DynamicSidebarRegistrar';
 import NamespaceDetailView from './components/NamespaceDetailView';
+import NamespacesListView from './components/NamespacesListView';
 import PolarisSettings from './components/PolarisSettings';
 
 // --- Sidebar entries ---
@@ -40,7 +40,7 @@ registerSidebarEntry({
   parent: 'polaris',
   name: 'polaris-namespaces',
   label: 'Namespaces',
-  url: '/polaris',
+  url: '/polaris/namespaces',
   icon: 'mdi:dns',
 });
 
@@ -48,12 +48,11 @@ registerSidebarEntry({
 
 registerRoute({
   path: '/polaris',
-  sidebar: 'polaris',
+  sidebar: 'polaris-overview',
   name: 'polaris',
   exact: true,
   component: () => (
     <PolarisDataProvider>
-      <DynamicSidebarRegistrar />
       <DashboardView includeSkipped={false} />
     </PolarisDataProvider>
   ),
@@ -66,20 +65,30 @@ registerRoute({
   exact: true,
   component: () => (
     <PolarisDataProvider>
-      <DynamicSidebarRegistrar />
       <DashboardView includeSkipped />
     </PolarisDataProvider>
   ),
 });
 
 registerRoute({
+  path: '/polaris/namespaces',
+  sidebar: 'polaris-namespaces',
+  name: 'polaris-namespaces',
+  exact: true,
+  component: () => (
+    <PolarisDataProvider>
+      <NamespacesListView />
+    </PolarisDataProvider>
+  ),
+});
+
+registerRoute({
   path: '/polaris/ns/:namespace',
-  sidebar: 'polaris',
+  sidebar: 'polaris-namespaces',
   name: 'polaris-namespace',
   exact: true,
   component: () => (
     <PolarisDataProvider>
-      <DynamicSidebarRegistrar />
       <NamespaceDetailView />
     </PolarisDataProvider>
   ),
