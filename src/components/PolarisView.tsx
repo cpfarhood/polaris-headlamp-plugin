@@ -6,8 +6,8 @@ import {
   StatusLabel,
 } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import React from 'react';
-import { usePolarisDataContext } from '../api/PolarisDataContext';
 import { AuditData, computeScore, countResults, ResultCounts } from '../api/polaris';
+import { usePolarisDataContext } from '../api/PolarisDataContext';
 
 function scoreStatus(score: number): 'success' | 'warning' | 'error' {
   if (score >= 80) return 'success';

@@ -13,9 +13,7 @@ export function PolarisDataProvider(props: { children: React.ReactNode }) {
   const interval = getRefreshInterval();
   const state = usePolarisData(interval);
 
-  return (
-    <PolarisDataContext.Provider value={state}>{props.children}</PolarisDataContext.Provider>
-  );
+  return <PolarisDataContext.Provider value={state}>{props.children}</PolarisDataContext.Provider>;
 }
 
 export function usePolarisDataContext(): PolarisDataContextValue {

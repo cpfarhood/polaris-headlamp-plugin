@@ -1,7 +1,7 @@
 import { registerSidebarEntry } from '@kinvolk/headlamp-plugin/lib';
 import React from 'react';
-import { usePolarisDataContext } from '../api/PolarisDataContext';
 import { getNamespaces } from '../api/polaris';
+import { usePolarisDataContext } from '../api/PolarisDataContext';
 
 const registeredNamespaces = new Set<string>();
 

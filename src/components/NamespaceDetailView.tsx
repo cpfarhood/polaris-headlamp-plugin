@@ -8,13 +8,13 @@ import {
 } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { usePolarisDataContext } from '../api/PolarisDataContext';
 import {
   computeScore,
   countResultsForItems,
   filterResultsByNamespace,
   Result,
 } from '../api/polaris';
+import { usePolarisDataContext } from '../api/PolarisDataContext';
 
 function scoreStatus(score: number): 'success' | 'warning' | 'error' {
   if (score >= 80) return 'success';
@@ -58,9 +58,7 @@ export default function NamespaceDetailView() {
       <>
         <SectionHeader title={`Polaris — ${namespace}`} />
         <SectionBox title="No Data">
-          <NameValueTable
-            rows={[{ name: 'Status', value: 'No Polaris audit results found.' }]}
-          />
+          <NameValueTable rows={[{ name: 'Status', value: 'No Polaris audit results found.' }]} />
         </SectionBox>
       </>
     );
