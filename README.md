@@ -222,6 +222,26 @@ AuditData
 
 Each check in a `ResultSet` has `Success` (bool) and `Severity` (`"warning"`, `"danger"`, or `"ignore"`). Checks with `Severity: "ignore"` and `Success: false` are counted as skipped. The cluster score is computed client-side as `pass / total * 100`.
 
+## Known Limitations
+
+### Skipped Count and Annotation-Based Exemptions
+
+The **Skipped** count shown in the plugin only reflects checks with `Severity: "ignore"` in the Polaris API response. It does **not** include annotation-based exemptions (e.g., `polaris.fairwinds.com/privilegeEscalationAllowed-exempt: "true"`).
+
+**Why?** Polaris completely omits exempted checks from the `results.json` endpoint. The native Polaris dashboard UI computes the "skipped" count client-side by:
+1. Querying Kubernetes resources (Deployments, DaemonSets, StatefulSets, Pods) directly
+2. Parsing their annotations for `polaris.fairwinds.com/*-exempt` keys
+3. Counting how many checks were exempted
+
+This plugin only has access to the processed audit results via the service proxy and does not query raw Kubernetes resources. To show accurate exemption counts, the plugin would need to:
+- Request cluster-wide read access to all workload types (requires additional RBAC grants beyond `services/proxy`)
+- Parse annotations on every workload in every namespace
+- Cross-reference with the Polaris check catalog to count exemptions
+
+This is a significant architectural change and is not currently implemented. Hover over the "Skipped" count in the UI to see a tooltip explaining this limitation.
+
+**Workaround:** Use the "View in Polaris Dashboard" link from any namespace detail view to see the full exemption count in the native dashboard.
+
 ## Releasing
 
 Releases are automated via CI. To cut a release:
