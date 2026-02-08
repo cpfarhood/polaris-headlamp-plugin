@@ -146,7 +146,7 @@ export function setRefreshInterval(seconds: number): void {
 // --- Polaris dashboard proxy URL ---
 
 export const POLARIS_DASHBOARD_PROXY =
-  '/api/v1/namespaces/polaris/services/polaris-dashboard:80/proxy/';
+  '/api/v1/namespaces/polaris/services/polaris-dashboard/proxy/';
 
 // --- Score computation ---
 
@@ -158,7 +158,7 @@ export function computeScore(counts: ResultCounts): number {
 // --- Data fetching hook ---
 
 const POLARIS_API_PATH =
-  '/api/v1/namespaces/polaris/services/polaris-dashboard:80/proxy/results.json';
+  '/api/v1/namespaces/polaris/services/polaris-dashboard/proxy/results.json';
 
 interface PolarisDataState {
   data: AuditData | null;
